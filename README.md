@@ -1,6 +1,6 @@
 **This is the CloudWatch appender decoupled from the multimodule project at https://github.com/trautonen/logback-ext/tree/master/logback-ext-cloudwatch-appender**
 
-### Repository
+### Maven
 ```xml
 <repositories>
     <repository>
@@ -14,13 +14,9 @@
         <url>http://mvnrepo.cantara.no/content/repositories/snapshots/</url>
     </repository>
 </repositories>
-```
 
-### Maven
-
-```xml
 <dependency>
-    <groupId>no.cantara.logback</groupId>
+    <groupId>no.cantara</groupId>
     <artifactId>logback-ext-cloudwatch-appender</artifactId>
     <version>1.0-SNAPSHOT</version>
 </dependency>
@@ -47,12 +43,12 @@ By default the appender automatically creates the log group and stream. To restr
 actions more, use `skipCreate` property as `true` and create the group and stream beforehand.
 
 ```xml
-<appender name="CLOUDWATCH" class="CloudWatchAppender">
+<appender name="CLOUDWATCH" class="no.cantara.logback.ext.aws.cloudwatch.CloudWatchAppender">
     <region>eu-west-1</region>
     <logGroup>logzgroup</logGroup>
     <logStream>logzstream</logStream>
-    <encoder class="org.cantara.logback.ext.jackson.JacksonEncoder">
-        <timeStampFormat>yyyy-MM-dd'T'HH:mm:ss.SSS</timeStampFormat>
+    <encoder>
+        <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg%n</pattern>
     </encoder>
 </appender>
 ```
