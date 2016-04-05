@@ -1,6 +1,16 @@
 **This is the CloudWatch appender decoupled from the multimodule project at https://github.com/trautonen/logback-ext/tree/master/logback-ext-cloudwatch-appender**
 
-### Maven
+   ---
+
+## CloudWatch Appender
+
+Appender that submits log events to CloudWatch Logs service. By default all appenders work in
+synchronous manner, except this. CloudWatch Logs is intended to accept batches of log events and
+due to the requirement of sequence token for batches this appender uses an internal queue similar
+to `ch.qos.logback.classic.AsyncAppender` and batches submits to CloudWatch logs according to
+appender configuration.
+
+### Install (Maven)
 ```xml
 <repositories>
     <repository>
@@ -21,17 +31,6 @@
     <version>1.0-SNAPSHOT</version>
 </dependency>
 ```
-
-   ---
-
-## CloudWatch Appender
-
-Appender that submits log events to CloudWatch Logs service. By default all appenders work in
-synchronous manner, except this. CloudWatch Logs is intended to accept batches of log events and
-due to the requirement of sequence token for batches this appender uses an internal queue similar
-to `ch.qos.logback.classic.AsyncAppender` and batches submits to CloudWatch logs according to
-appender configuration.
-
 
 ### Configuration
 
