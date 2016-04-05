@@ -1,4 +1,4 @@
-package no.andeero.logback.ext.aws;
+package no.cantara.logback.ext.aws;
 
 /*
  * #[license]
@@ -12,10 +12,10 @@ package no.andeero.logback.ext.aws;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,32 +26,28 @@ package no.andeero.logback.ext.aws;
  * %[license]
  */
 
-import ch.qos.logback.core.spi.ContextAware;
-import com.amazonaws.AmazonWebServiceRequest;
-import com.amazonaws.handlers.AsyncHandler;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.filter.Filter;
+import ch.qos.logback.core.spi.FilterReply;
 
-import java.util.concurrent.CountDownLatch;
+public class InternalSdkLoggingFilter<E> extends Filter<E> {
 
-public class LoggingEventHandler<REQUEST extends AmazonWebServiceRequest, RESULT> implements AsyncHandler<REQUEST, RESULT> {
+    private static final String[] EXCLUDED_PACKAGES = { "org.apache.http.", "com.amazonaws." };
 
-    protected final ContextAware contextAware;
-    protected final CountDownLatch latch;
-    protected final String errorMessage;
-
-    public LoggingEventHandler(ContextAware contextAware, CountDownLatch latch, String errorMessage) {
-        this.contextAware = contextAware;
-        this.latch = latch;
-        this.errorMessage = errorMessage;
+    public InternalSdkLoggingFilter() {
+        setName("aws-internal-logging-exclude");
     }
 
     @Override
-    public void onError(Exception exception) {
-        contextAware.addWarn(errorMessage, exception);
-        latch.countDown();
-    }
-
-    @Override
-    public void onSuccess(REQUEST request, RESULT result) {
-        latch.countDown();
+    public FilterReply decide(E event) {
+        if (event instanceof ILoggingEvent) {
+            String loggerName = ((ILoggingEvent) event).getLoggerName();
+            for (String exclude : EXCLUDED_PACKAGES) {
+                if (loggerName.startsWith(exclude)) {
+                    return FilterReply.DENY;
+                }
+            }
+        }
+        return FilterReply.NEUTRAL;
     }
 }

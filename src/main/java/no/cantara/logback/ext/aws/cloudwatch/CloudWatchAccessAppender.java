@@ -1,7 +1,7 @@
-package no.andeero.logback.ext.aws.cloudwatch;
+package no.cantara.logback.ext.aws.cloudwatch;
 
-import no.andeero.logback.ext.aws.AwsSupport;
-import no.andeero.logback.ext.core.CommonEventAttributes;
+import no.cantara.logback.ext.core.CommonEventAttributes;
+import no.cantara.logback.ext.aws.AwsSupport;
 import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.core.filter.Filter;
 

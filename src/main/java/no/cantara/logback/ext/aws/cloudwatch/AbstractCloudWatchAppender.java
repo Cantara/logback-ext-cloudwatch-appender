@@ -1,9 +1,9 @@
-package no.andeero.logback.ext.aws.cloudwatch;
+package no.cantara.logback.ext.aws.cloudwatch;
 
-import no.andeero.logback.ext.aws.AbstractAwsEncodingStringAppender;
-import no.andeero.logback.ext.aws.AwsSupport;
-import no.andeero.logback.ext.core.StringPayloadConverter;
-import no.andeero.logback.ext.core.CommonEventAttributes;
+import no.cantara.logback.ext.aws.AbstractAwsEncodingStringAppender;
+import no.cantara.logback.ext.core.StringPayloadConverter;
+import no.cantara.logback.ext.aws.AwsSupport;
+import no.cantara.logback.ext.core.CommonEventAttributes;
 import ch.qos.logback.core.filter.Filter;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.amazonaws.regions.RegionUtils;

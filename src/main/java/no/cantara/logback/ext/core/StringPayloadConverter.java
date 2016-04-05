@@ -1,4 +1,4 @@
-package no.andeero.logback.ext.core;
+package no.cantara.logback.ext.core;
 
 import com.google.common.io.BaseEncoding;
 

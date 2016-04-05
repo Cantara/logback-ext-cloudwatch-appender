@@ -1,4 +1,4 @@
-package no.andeero.logback.ext.aws;
+package no.cantara.logback.ext.aws;
 
 /*
  * #[license]

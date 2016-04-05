@@ -1,4 +1,4 @@
-package no.andeero.logback.ext.aws;
+package no.cantara.logback.ext.aws;
 
 /*		
  * #[license]		
@@ -32,8 +32,8 @@ import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
-import no.andeero.logback.ext.core.AppenderExecutors;
-import no.andeero.logback.ext.core.EncodingStringAppender;
+import no.cantara.logback.ext.core.AppenderExecutors;
+import no.cantara.logback.ext.core.EncodingStringAppender;
 
 import static java.lang.String.format;
 
