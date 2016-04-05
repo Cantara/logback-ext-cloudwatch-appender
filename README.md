@@ -1,53 +1,107 @@
-Logback Extensions
-==================
+**This is the CloudWatch appender decoupled from the multimodule project at https://github.com/trautonen/logback-ext/tree/master/logback-ext-cloudwatch-appender**
 
-[![Build Status](https://img.shields.io/travis/trautonen/logback-ext.svg?style=flat-square)](https://travis-ci.org/trautonen/logback-ext)
-![License](https://img.shields.io/github/license/trautonen/logback-ext.svg?style=flat-square)
+   ---
 
-Extensions for Logback logging library mainly for appenders aimed for Amazon Web Services,
-including CloudWatch Logs, DynamoDB, Kinesis, SNS and SQS appenders. Contains also high
-performance asynchronous appender based on LMAX disrupotr and some utilities like Jackson JSON
-encoder.
+## CloudWatch Appender
 
-
-## Using Logback Extensions
-
-Logback Extensions requires Java 7 or newer. Include desired modules in your project's
-dependency management and configure the appenders or encoders using Logback's XML configutation
-or Java API.
+Appender that submits log events to CloudWatch Logs service. By default all appenders work in
+synchronous manner, except this. CloudWatch Logs is intended to accept batches of log events and
+due to the requirement of sequence token for batches this appender uses an internal queue similar
+to `ch.qos.logback.classic.AsyncAppender` and batches submits to CloudWatch logs according to
+appender configuration.
 
 
-### Modules
+### Maven
 
-All modules belong to group `org.eluder.logback`. See each module for specific documentation.
-
-* Extensions core module: [logback-ext-core](logback-ext-core/)
-* AWS core module: [logback-ext-aws-core](logback-ext-aws-core/)
-* Jackson JSON encoder: [logback-ext-jackson](logback-ext-jackson/)
-* LMAX Disruptor appender: [logback-ext-lmax-appender](logback-ext-lmax-appender/)
-* CloudWatch appender: [logback-ext-cloudwatch-appender](logback-ext-cloudwatch-appender/)
-* DynamoDB appender: [logback-ext-dynamodb-appender](logback-ext-dynamodb-appender/)
-* Kinesis appender: [logback-ext-kinesis-appender](logback-ext-kinesis-appender/)
-* SNS appender: [logback-ext-sns-appender](logback-ext-sns-appender/)
-* SQS appender: [logback-ext-sqs-appender](logback-ext-sqs-appender/)
+```xml
+<dependency>
+    <groupId>org.cantara.logback</groupId>
+    <artifactId>logback-ext-cloudwatch-appender</artifactId>
+    <version>1.0-SNAPSHOT</version>
+</dependency>
+```
 
 
-### AWS Authentication
+### Configuration
 
-All AWS based appenders require IAM authentication. The default credentials provider from
-`org.eluder.logback.ext.aws.core.AwsSupport` creates a credential chain in the following order.
+Create the following appender configuration in `logback.xml` and replace the required properties
+`region`, `logGroup` and `logStream` with desired values and set an `encoder` that serializes
+the logging events.
 
-1. Environment variables `AWS_ACCESS_KEY_ID` and `AWS_SECRET_KEY`
-2. System properties `aws.accessKeyId` and `aws.secretKey`
-3. Appender configuration properties `accessKey` and `secretKey`
-4. AWS profile configuration file `~/.aws/credentials`
-5. EC2 instance role
+By default the appender automatically creates the log group and stream. To restrict IAM policy
+actions more, use `skipCreate` property as `true` and create the group and stream beforehand.
 
-Best practice for EC2 instances is to use instance role only. With instance role no access keys or
-secret keys are exposed if the server is compromised.
+```xml
+<appender name="CLOUDWATCH" class="CloudWatchAppender">
+    <region>eu-west-1</region>
+    <logGroup>logzgroup</logGroup>
+    <logStream>logzstream</logStream>
+    <encoder class="org.cantara.logback.ext.jackson.JacksonEncoder">
+        <timeStampFormat>yyyy-MM-dd'T'HH:mm:ss.SSS</timeStampFormat>
+    </encoder>
+</appender>
+```
+
+Complete list of the appender properties.
+
+| Property | Type | Description |
+| -------- | ---- | ----------- |
+| `region` | *string* | AWS region. |
+| `logGroup` | *string* | Log group name. |
+| `logStream` | *string* | Log stream name. |
+| `maxBatchSize` | *integer* | **Default: 512**<br>Maximum number of log events in single submit batch. |
+| `maxBatchTime` | *ingeger* | **Default: 1000**<br>Maximum time in milliseconds to collect log events to submit batch. |
+| `internalQueueSize` | *integer* | **Default: 8192**<br>Size of the internal log event queue. |
+| `skipCreate` | *boolean* | **Default: false**<br>Skip queue and stream creationg. Requires less IAM policy actions. |
+| `charset` | *charset* | **Default: UTF-8**<br>Charset for the log event encoder. |
+| `binary` | *boolean* | **Default: false**<br>Encoded data is binary and must be Base64 encoded. |
+| `encoder` | *encoder* | Logback encoder to serialize the logging events. |
+| `accessKey` | *string* | IAM access key. |
+| `secretKey` | *string* | IAM secret key. |
+| `maxPayloadSize` | *integer* | **Default: 256**<br>Maximum log event payload size in kilobytes. |
+| `maxFlushTime` | *integer* | **Default: 3000**<br>Maximum wait time in milliseconds to wait if internal queue is full and time to wait for the remaining queue to flush events on appender stop. |
 
 
-### Continuous Integration
+### Required IAM policy
 
-TravisCI builds the project with Oracle JDK 7 and 8. Builds created with Oracle JDK 7 are deployed
-to Sonatype OSSRH.
+Policy required to create the log group and stream on demand.
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:DescribeLogGroups",
+        "logs:DescribeLogStreams",
+        "logs:PutLogEvents"
+    ],
+      "Resource": [
+        "arn:aws:logs:*:*:*"
+    ]
+  }
+ ]
+}
+```
+
+More restrictive policy for log event submits only.
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:PutLogEvents"
+    ],
+      "Resource": [
+        "arn:aws:logs:eu-west-1:*:log-group:logzgroup:log-stream:logzstream"
+    ]
+  }
+ ]
+}
+```
