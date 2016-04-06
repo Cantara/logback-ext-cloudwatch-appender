@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>no.cantara</groupId>
     <artifactId>logback-ext-cloudwatch-appender</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <parent>
         <groupId>no.cantara.emi</groupId>
@@ -18,7 +16,7 @@
         <developerConnection>scm:git:ssh://git@github.com/cantara/logback-ext-cloudwatch-appender.git</developerConnection>
         <connection>scm:git:https://github.com/cantara/logback-ext-cloudwatch-appender.git</connection>
         <url>https://github.com/Cantara/logback-ext-cloudwatch-appender</url>
-        <tag>HEAD</tag>
+        <tag>logback-ext-cloudwatch-appender-1.0</tag>
     </scm>
 
     <repositories>
