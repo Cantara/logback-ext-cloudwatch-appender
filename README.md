@@ -4,6 +4,9 @@
 
 ## CloudWatch Appender
 
+[![Known Vulnerabilities](https://snyk.io/test/github/Cantara/logback-ext-cloudwatch-appender/badge.svg)](https://snyk.io/test/github/Cantara/logback-ext-cloudwatch-appender)
+
+
 Appender that submits log events to CloudWatch Logs service. By default all appenders work in
 synchronous manner, except this. CloudWatch Logs is intended to accept batches of log events and
 due to the requirement of sequence token for batches this appender uses an internal queue similar
