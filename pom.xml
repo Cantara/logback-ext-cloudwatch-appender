@@ -34,7 +34,7 @@
     </repositories>
 
     <properties>
-        <aws.version>1.11.261</aws.version>
+        <aws.version>1.11.271</aws.version>
         <guava.version>18.0</guava.version>
         <logback.version>1.2.3</logback.version>
     </properties>
